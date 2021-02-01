@@ -177,32 +177,30 @@ def main():
     for i in range(iter_number):
 
         # 3. Iteratively compute the frequency of a pair of characters or character sequences in the corpus
-        print("3. Iteratively compute the frequency of a pair of characters or character sequences in the corpus")
+        # print("3. Iteratively compute the frequency of a pair of characters or character sequences in the corpus")
 
-        print('Pairs frequency:')
+        # print('Pairs frequency:')
         pairs = get_pair_freq(splitted_vocabulary)
-        print(pairs)
+        
         if not pairs:
-            print(i)
+            # print(i)
             break
         
-        print("\n")
 
         # Find the most frequent pair and merge them together into a new token.
         most_pair = max(pairs, key = pairs.get)
-        print("The most frequent pair or best pair in the corpus: ", most_pair)
+        # print("The most frequent pair or best pair in the corpus: ", most_pair)
 
-        print("\n")
         # 4. Merge the most frequent pair in corpus and save to the vocabulary
-        print('4. Merging the most frequent pair:')
+        # print('4. Merging the most frequent pair:')
         merged_pair = "".join(list(most_pair))
         print('Merged pair:({})'.format(merged_pair))
 
-        print("\n")
+        # print("\n")
         # 5. Save the best pair to the vocabulary
-        print('5. saving the most frequent pair:')
+        # print('5. saving the most frequent pair:')
         merged_vocabulary = merge_vocabulary(splitted_vocabulary, most_pair)
-        print('Saved pair:{' + ", ".join(["\'" + w + "\'" + ":" + str(freq)  for w, freq in merged_vocabulary]) + "}")
+        # print('Saved pair:{' + ", ".join(["\'" + w + "\'" + ":" + str(freq)  for w, freq in merged_vocabulary]) + "}")
         bpe_operations.append(most_pair)
         splitted_vocabulary = merged_vocabulary
 
