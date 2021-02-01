@@ -13,11 +13,13 @@ def read_corpus_file(file_path):
             words = line.strip().split()
             for word in words:
                 words_list.append(word.strip())
+    words_list.sort()
     return words_list
 
 # Get Unique word list
 def get_unique_wordlist(words_list):
     unique_words_list = list(set(words_list))
+    unique_words_list.sort()
     return unique_words_list
 
 # Compute the frequency of each word in the corpus
@@ -124,9 +126,10 @@ def main():
     # print(words_list)
 
     # 1 a) Gate and prepare a training text dataset/corpus
+    
     unique_words_list = get_unique_wordlist(words_list)
     print("\n")
-    print("Reading dataset/corpus:")
+    print(" 1 a) Reading dataset/corpus:")
     print("File Name : {}".format(file_name))
     print("Initial unique word list in the dataset:")
     print("Word List: [{}]".format(", ".join(unique_words_list)))
@@ -135,12 +138,12 @@ def main():
 
     # 1 b) Compute the frequency of each word in the corpus
     word_freq = compute_word_frequency(words_list, unique_words_list)
-    print('computing frequency:')
+    print('1 b) computing frequency:')
     print('Word frequency: [{}]'.format(", ".join([w[0] + " (" + str(w[1]) + ")" for w in word_freq])))
 
     print("\n")
     # 1 c) Define a required certain size of sub-word vocabulary
-    print("Defining Vocabulary:")
+    print("1 c) Defining Vocabulary:")
     voc_size_str = input("Required vocabulary size:")
     try:
         voc_size = int(voc_size_str)
@@ -152,19 +155,19 @@ def main():
     # 1 d) Append a special symbol to the end of every word in the dataset
     spec_symbol = '</w>'
     appended_list = append_symbol(word_freq, symbol = spec_symbol)
-    print('Appending special symbol:')
+    print('1 d) Appending special symbol:')
     print('Appended symbol \'{}\':[{}]'.format(spec_symbol, ", ".join(['\'' + w + '\' - (' + str(freq) + ')' for w, freq in appended_list])))
 
     print("\n")
     # 1 e) Split each word in the corpus into sequence of characters
-    print('Splitting words:')
+    print('1 e) Splitting words:')
     splitted_vocabulary = get_splitted_vocabulary(word_freq, spec_symbol)
     splitted_vocabulary = convert_list2str_vocabulary(splitted_vocabulary)
     print('Split words: [{}]'.format(", ".join(["\'" + w + '\' - (' + str(freq) + ')' for w, freq in splitted_vocabulary])))
 
     print("\n")
     # 2. Initialize the vocabulary with unique characters in the corpus
-    print('Initializing vocabulary:')
+    print('2. Initializing vocabulary:')
     init_voc = init_vocabulary(splitted_vocabulary)
     print('Initial vocabulary:({}) - {}'.format(len(init_voc), init_voc))
 
@@ -172,7 +175,9 @@ def main():
 
     bpe_operations = []
     for i in range(iter_number):
+
         # 3. Iteratively compute the frequency of a pair of characters or character sequences in the corpus
+        print("3. Iteratively compute the frequency of a pair of characters or character sequences in the corpus")
 
         print('Pairs frequency:')
         pairs = get_pair_freq(splitted_vocabulary)
@@ -180,21 +185,22 @@ def main():
         if not pairs:
             print(i)
             break
+        
         print("\n")
+
         # Find the most frequent pair and merge them together into a new token.
         most_pair = max(pairs, key = pairs.get)
         print("The most frequent pair or best pair in the corpus: ", most_pair)
 
         print("\n")
         # 4. Merge the most frequent pair in corpus and save to the vocabulary
-        print('Merging the most frequent pair:')
+        print('4. Merging the most frequent pair:')
         merged_pair = "".join(list(most_pair))
         print('Merged pair:({})'.format(merged_pair))
 
         print("\n")
         # 5. Save the best pair to the vocabulary
-        print('saving the most frequent pair:')
-        # merged_vocabulary = 
+        print('5. saving the most frequent pair:')
         merged_vocabulary = merge_vocabulary(splitted_vocabulary, most_pair)
         print('Saved pair:{' + ", ".join(["\'" + w + "\'" + ":" + str(freq)  for w, freq in merged_vocabulary]) + "}")
         bpe_operations.append(most_pair)
@@ -206,13 +212,19 @@ def main():
 
     # End of Part-1
 
+
+    print("\n")
+
     # Part-2 Applying BPE to an OOV word or new vocabulary
 
+    print("Part-2 Applying BPE to an OOV word or new vocabulary")
+    print("\n")
     known_word = 'newest'
     unknown_word =  'fastest!'
 
     print("\n")
     # 1. Split the OOV word into characters after appending </w>
+    print("1. Split the OOV word into characters after appending </w>")
     OOV_word = split_word(known_word, spec_symbol)
     print("Appending </w> and splitting OOV word:")
     print('OOV (original word) = \'{}\''.format(known_word))
@@ -221,54 +233,65 @@ def main():
 
     print("\n")
     # 2. Compute pair of character or character sequences in a word
-    print("Computing pair of character in the word:")
+    print("2. Computing pair of character in the word:")
     pairs = get_pairs(OOV_word)
     print('Computed pairs:', pairs)
 
     print("\n")
     # 3. Select the pairs present in the learned operations
+    print("3. Select the pairs present in the learned operations")
     selected_pair, index = find_bpe_operation(pairs, bpe_operations)
     print('Selecting the pairs:', selected_pair)
 
     print("\n")
     # 4. Merge the most frequent pair (Apply the merge on the word)
-    print("Merging the most frequent pair")
+    print("4. Merging the most frequent pair")
     new_OOV_word = merge_word_by_pair(OOV_word, selected_pair)
     print('Merged pair:', new_OOV_word)
 
     print("\n")
     # 5. Repeat steps 2 and 3, 4 until merging is possible.
+    print("5. Repeat steps 2 and 3, 4 until merging is possible")
 
+    print("\n")
+    unknown_word = input("Input OOV word:")
+    
+    print("\n")
     cur_bpe_operations = []
+    # 1. Split the OOV word into characters after appending </w>
+    print("1. Appending </w> and splitting OOV word:")
     OOV_word = split_word(unknown_word, spec_symbol)
+    print('OOV (original word) = \'{}\''.format(unknown_word))
+    print('</w> appended:[\'{}\']'.format(''.join(OOV_word)))
+    print('OOV word split:', OOV_word)
+    
     while True:
-        # 1. Split the OOV word into characters after appending </w>
-        print("Appending </w> and splitting OOV word:")
-        print('OOV (original word) = \'{}\''.format(unknown_word))
-        print('</w> appended:[\'{}\']'.format(''.join(OOV_word)))
-        print('OOV word split:', OOV_word)
 
         print("\n")
         # 2. Compute pair of character or character sequences in a word
-        print("Computing pair of character in the word:")
+        print("2. Computing pair of character in the word:")
         pairs = get_pairs(OOV_word)
         print('Computed pairs:', pairs)
 
         print("\n")
         # 3. Select the pairs present in the learned operations
+        print("3. Select the pairs present in the learned operations")
         selected_pair, index = find_bpe_operation(pairs, bpe_operations)
+        # check if merging is possible
         if not selected_pair:
+            print("Merging ended")
             break
         print('Selecting the pairs:', selected_pair)
 
         print("\n")
         # 4. Merge the most frequent pair (Apply the merge on the word)
-        print("Merging the most frequent pair")
+        print("4. Merging the most frequent pair")
         new_OOV_word = merge_word_by_pair(OOV_word, selected_pair)
         print('Merged pair:', new_OOV_word)
         bpe_operations.append((new_OOV_word, index))
 
         OOV_word = new_OOV_word
-    print(new_OOV_word)
+    print("\n")
+    print('Tokenized as: ',new_OOV_word)
 if __name__ == '__main__':
     main()
