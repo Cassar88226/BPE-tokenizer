@@ -217,78 +217,54 @@ def main():
 
     print("Part-2 Applying BPE to an OOV word or new vocabulary")
     print("\n")
-    known_word = 'newest'
-    unknown_word =  'fastest!'
-
-    print("\n")
-    # 1. Split the OOV word into characters after appending </w>
-    print("1. Split the OOV word into characters after appending </w>")
-    OOV_word = split_word(known_word, spec_symbol)
-    print("Appending </w> and splitting OOV word:")
-    print('OOV (original word) = \'{}\''.format(known_word))
-    print('</w> appended:[\'{}\']'.format(''.join(OOV_word)))
-    print('OOV word split:', OOV_word)
-
-    print("\n")
-    # 2. Compute pair of character or character sequences in a word
-    print("2. Computing pair of character in the word:")
-    pairs = get_pairs(OOV_word)
-    print('Computed pairs:', pairs)
-
-    print("\n")
-    # 3. Select the pairs present in the learned operations
-    print("3. Select the pairs present in the learned operations")
-    selected_pair, index = find_bpe_operation(pairs, bpe_operations)
-    print('Selecting the pairs:', selected_pair)
-
-    print("\n")
-    # 4. Merge the most frequent pair (Apply the merge on the word)
-    print("4. Merging the most frequent pair")
-    new_OOV_word = merge_word_by_pair(OOV_word, selected_pair)
-    print('Merged pair:', new_OOV_word)
-
-    print("\n")
-    # 5. Repeat steps 2 and 3, 4 until merging is possible.
-    print("5. Repeat steps 2 and 3, 4 until merging is possible")
+    
 
     print("\n")
     unknown_word = input("Input OOV word:")
+
+    print("Repeat steps 2 and 3, 4 until merging is possible")
+
     
     print("\n")
-    cur_bpe_operations = []
+    cur_bpe_operations = {}
     # 1. Split the OOV word into characters after appending </w>
-    print("1. Appending </w> and splitting OOV word:")
+    print("Appending </w> and splitting OOV word:")
     OOV_word = split_word(unknown_word, spec_symbol)
     print('OOV (original word) = \'{}\''.format(unknown_word))
     print('</w> appended:[\'{}\']'.format(''.join(OOV_word)))
     print('OOV word split:', OOV_word)
     
+    print("\n")
     while True:
 
-        print("\n")
+        # print("\n")
         # 2. Compute pair of character or character sequences in a word
-        print("2. Computing pair of character in the word:")
+        # print("2. Computing pair of character in the word:")
         pairs = get_pairs(OOV_word)
-        print('Computed pairs:', pairs)
+        # print('Computed pairs:', pairs)
 
-        print("\n")
+        # print("\n")
         # 3. Select the pairs present in the learned operations
-        print("3. Select the pairs present in the learned operations")
+        # print("3. Select the pairs present in the learned operations")
         selected_pair, index = find_bpe_operation(pairs, bpe_operations)
         # check if merging is possible
         if not selected_pair:
-            print("Merging ended")
+            # print("Merging ended")
             break
-        print('Selecting the pairs:', selected_pair)
+        # print('Selecting the pairs:', selected_pair)
 
-        print("\n")
+        # print("\n")
         # 4. Merge the most frequent pair (Apply the merge on the word)
-        print("4. Merging the most frequent pair")
+        # print("4. Merging the most frequent pair")
         new_OOV_word = merge_word_by_pair(OOV_word, selected_pair)
-        print('Merged pair:', new_OOV_word)
-        bpe_operations.append((new_OOV_word, index))
+        # print('Merged pair:', new_OOV_word)
+        cur_bpe_operations[selected_pair] = index
 
         OOV_word = new_OOV_word
+    
+    print('Possible merges:', cur_bpe_operations)
+    if not cur_bpe_operations:
+        new_OOV_word = OOV_word
     print("\n")
     print('Tokenized as: ',new_OOV_word)
 if __name__ == '__main__':
