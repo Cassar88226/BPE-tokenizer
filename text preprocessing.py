@@ -179,23 +179,25 @@ def main():
     init_voc_len = len(init_voc)
     print('Initial vocabulary:({}) - {}'.format(init_voc_len, init_voc))
 
-    total_iter_number = voc_size - init_voc_len
+    total_iter_number = voc_size
 
     while total_iter_number < 1:
-        voc_size = input_voc_size("The number of iteration isn't available. Please Input Required vocabulary size again:")
-        total_iter_number = voc_size - init_voc_len
+        print("The required vocabulary size should be greater than 0")
+        voc_size = input_voc_size("Please Input Required vocabulary size again:")
+        total_iter_number = voc_size
 
     print("\r")
 
     bpe_operations = []
 
     iter_number = 1
+    print('Iteration {}:'.format(iter_number))
     print("3. Iteratively compute the frequency of a pair of characters or character sequences in the corpus")
     print('Pairs frequency:')
     pairs = get_pair_freq(splitted_vocabulary)
     print(pairs)
     most_pair = max(pairs, key = pairs.get)
-    print("The most frequent pair or best pair in the corpus: ", most_pair)
+    print("Most frequent pair: ", most_pair)
 
     print("\r")
     print('4. Merging the most frequent pair:')
@@ -214,6 +216,9 @@ def main():
     bpe_operations.append(most_pair)
     splitted_vocabulary = merged_vocabulary
 
+    print("\r")
+    print('Repeating steps 3-5.')
+    print("\r")
     iter_number += 1
     while iter_number <= total_iter_number:
 
@@ -221,6 +226,7 @@ def main():
         # print("3. Iteratively compute the frequency of a pair of characters or character sequences in the corpus")
 
         # print('Pairs frequency:')
+        print('Iteration {}:'.format(iter_number))
         pairs = get_pair_freq(splitted_vocabulary)
         
         if not pairs:
@@ -230,7 +236,7 @@ def main():
 
         # Find the most frequent pair and merge them together into a new token.
         most_pair = max(pairs, key = pairs.get)
-        print("The most frequent pair: ", most_pair)
+        print("Most frequent pair: ", most_pair)
 
         # 4. Merge the most frequent pair in corpus and save to the vocabulary
         # print('4. Merging the most frequent pair:')
@@ -333,7 +339,7 @@ def main():
             iter_number += 1
 
         print("\r")
-        print("Iteration {}".format(iter_number))
+        # print("Iteration {}".format(iter_number))
         print('Possible merges:', cur_bpe_operations)
         if not cur_bpe_operations:
             new_OOV_word = OOV_word
